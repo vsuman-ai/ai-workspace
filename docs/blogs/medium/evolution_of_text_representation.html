@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Evolution of Text Representation: From Topic to Vectors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a18;
+    --ink-2: #3d3d38;
+    --ink-3: #6b6b64;
+    --ink-4: #9b9b92;
+    --paper: #faf9f6;
+    --paper-2: #f2f0eb;
+    --paper-3: #e8e5de;
+    --accent: #2d5a3d;
+    --accent-light: #e8f0eb;
+    --purple: #5a4fcf;
+    --purple-light: #eeecfb;
+    --teal: #1d7a6a;
+    --teal-light: #e4f4f1;
+    --amber: #b86a10;
+    --amber-light: #fdf3e4;
+    --coral: #c04830;
+    --coral-light: #fceee9;
+    --blue: #1a5fa8;
+    --blue-light: #e6eef8;
+    --border: rgba(26,26,24,0.1);
+    --border-strong: rgba(26,26,24,0.2);
+  }
+
+  html { font-size: 18px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.8;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--paper-3);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.3rem 0.9rem;
+    border-radius: 2rem;
+    margin-bottom: 2rem;
+  }
+  .hero h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1.2;
+    max-width: 700px;
+    margin: 0 auto 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: rgba(250,249,246,0.65);
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+  }
+  .hero-meta {
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    color: rgba(250,249,246,0.45);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .container-wide {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── BODY PROSE ── */
+  .prose { padding: 3rem 0; }
+  .prose p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--ink-2);
+    margin-bottom: 1.5rem;
+  }
+  .prose h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 3rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .prose h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 2rem 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .prose ul, .prose ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--ink-2);
+  }
+  .prose li {
+    margin-bottom: 0.45rem;
+    line-height: 1.7;
+  }
+  .prose strong { font-weight: 500; color: var(--ink); }
+  .prose em { font-family: 'Lora', serif; font-style: italic; }
+  .prose code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82em;
+    background: var(--paper-2);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    color: var(--ink-2);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 2.5rem 0;
+  }
+  .divider span { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-4); }
+
+  /* ── PULL QUOTE ── */
+  .pullquote {
+    border-left: 3px solid var(--accent);
+    margin: 2.5rem 0;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+  }
+  .pullquote p {
+    font-family: 'Lora', serif;
+    font-size: 1.2rem !important;
+    font-style: italic;
+    color: var(--ink) !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+  }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    border: 1px solid transparent;
+  }
+  .callout-title {
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  .callout p { margin: 0; font-size: 0.92rem !important; }
+  .callout-purple { background: var(--purple-light); border-color: rgba(90,79,207,0.2); }
+  .callout-purple .callout-title { color: var(--purple); }
+  .callout-teal { background: var(--teal-light); border-color: rgba(29,122,106,0.2); }
+  .callout-teal .callout-title { color: var(--teal); }
+  .callout-amber { background: var(--amber-light); border-color: rgba(184,106,16,0.2); }
+  .callout-amber .callout-title { color: var(--amber); }
+
+  /* ── PIPELINE CODE ── */
+  .pipeline {
+    background: var(--ink);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: #a8d5b5;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .pipeline .pipe-arrow { color: #5a9fd4; }
+  .pipeline .pipe-label { color: rgba(168,213,181,0.5); font-size: 0.75rem; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-4);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  /* ── VISUAL CARD ── */
+  .visual-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem 1.5rem 1.5rem;
+    margin: 2.5rem 0;
+    overflow: hidden;
+  }
+  .visual-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-4);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .visual-card h4 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .visual-card p.caption {
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    margin: 0.75rem 0 0;
+    font-style: italic;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  .compare-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border-bottom: 2px solid var(--border-strong);
+    color: var(--ink-3);
+    letter-spacing: 0.03em;
+  }
+  .compare-table th:first-child { width: 28%; }
+  .compare-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table .dim { color: var(--ink-3); font-size: 0.82rem; font-style: italic; }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    padding: 0.15rem 0.55rem;
+    border-radius: 3rem;
+    margin-top: 0.2rem;
+  }
+  .badge-win { background: #dff4e8; color: #1a6b38; }
+  .badge-ok { background: var(--paper-2); color: var(--ink-3); }
+
+  /* ── DECISION FRAMEWORK ── */
+  .decision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 600px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .decision-card .q {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+  }
+  .decision-card .a-lda { font-size: 0.8rem; color: var(--purple); margin-bottom: 0.3rem; }
+  .decision-card .a-emb { font-size: 0.8rem; color: var(--teal); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 1.5px;
+    background: var(--border-strong);
+  }
+  .timeline-item { position: relative; margin-bottom: 2rem; }
+  .timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1.5px var(--border-strong);
+  }
+  .timeline-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-4);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+  }
+  .timeline-title {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .timeline-body { font-size: 0.9rem; color: var(--ink-3); line-height: 1.65; }
+
+  /* ── USE CASE CARDS ── */
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 600px) { .use-case-grid { grid-template-columns: 1fr; } }
+  .use-case-card {
+    border-radius: 10px;
+    padding: 1.2rem 1.3rem;
+    border: 1px solid transparent;
+  }
+  .use-case-card.lda { background: var(--purple-light); border-color: rgba(90,79,207,0.15); }
+  .use-case-card.emb { background: var(--teal-light); border-color: rgba(29,122,106,0.15); }
+  .use-case-card .uc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .use-case-card.lda .uc-label { color: var(--purple); }
+  .use-case-card.emb .uc-label { color: var(--teal); }
+  .use-case-card ul { margin: 0; padding-left: 1.1rem; }
+  .use-case-card li { font-size: 0.88rem; color: var(--ink-2); margin-bottom: 0.35rem; }
+
+  /* ── FINAL TAKEAWAY ── */
+  .takeaway {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 14px;
+    padding: 2.5rem;
+    margin: 3rem 0;
+  }
+  .takeaway h3 {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+  .takeaway p { font-size: 0.95rem; color: rgba(250,249,246,0.75); line-height: 1.8; margin-bottom: 1rem; }
+  .takeaway p:last-child { margin: 0; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-4);
+    margin-top: 4rem;
+  }
+
+  /* ── SVG DIAGRAMS ── */
+  .svg-wrap { width: 100%; overflow-x: auto; }
+  .svg-wrap svg { width: 100%; height: auto; }
+
+  /* Radar chart */
+  #radarWrap { position: relative; height: 320px; }
+
+  /* Vector space viz */
+  .vs-container { position: relative; }
+
+  @media print {
+    .hero { background: #1a1a18 !important; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="hero-tag">Engineering · NLP · Production Systems</div>
+  <h1>The Evolution of Text Representation: From Topic to Vectors</h1>
+  <p class="hero-sub">A deep comparison of two clustering philosophies — and why the choice is really about how you represent language, not just which algorithm you pick.</p>
+  <p class="hero-meta">by Vicky Suman &nbsp;·&nbsp; 2025</p>
+</header>
+
+<!-- ══════════ INTRO ══════════ -->
+<main>
+<div class="container">
+<article class="prose">
+
+<p>Text clustering sounds simple on paper: take a collection of documents, group similar ones together, and use those groups to power product features. In practice, it is one of those engineering problems that becomes much harder the moment we move from experiments to real systems.</p>
+
+<p>A clustering approach that looks elegant in a notebook can fail badly in production. It may merge unrelated items, split the same event into several clusters, struggle with streaming updates, or become too expensive to run at scale. The challenge becomes even sharper when the goal is not generic topic discovery, but something operationally useful — grouping related news stories, detecting trends, or consolidating signals from real-time systems.</p>
+
+<p>In this post, I want to compare two very different but highly instructive approaches to text clustering:</p>
+
+<ul>
+  <li><strong>LDA-based story clustering</strong> — a classical probabilistic approach</li>
+  <li><strong>Embedding-based trend clustering with Agglomerative Clustering</strong> — a modern semantic pipeline</li>
+</ul>
+
+<p>Both are trying to solve a similar high-level problem: identify groups of text items that belong together. But they are built on very different assumptions, different representations of text, and different production philosophies.</p>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ HISTORY SECTION (NEW) ══════════ -->
+<h2>A brief history of clustering</h2>
+<p>Before we dive into the two approaches, it helps to understand where clustering comes from. The ideas underpinning modern text clustering did not appear overnight — they evolved across seven decades of computer science, statistics, and linguistics.</p>
+
+</article>
+</div>
+
+<!-- TIMELINE VISUAL -->
+<!-- TIMELINE VISUAL -->
+<div class="container-wide">
+  <div class="visual-card">
+    <span class="visual-card-label">Visual 1 — Clustering history</span>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 860 650" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <defs>
+          <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9b9b92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Vertical spine -->
+        <line x1="120" y1="20" x2="120" y2="590" stroke="#e8e5de" stroke-width="2"/>
+        <line x1="120" y1="590" x2="120" y2="590" stroke="#9b9b92" stroke-width="1.5" marker-end="url(#arr1)"/>
+
+        <!-- 1950s -->
+        <circle cx="120" cy="80" r="8" fill="#fff" stroke="#6b6b64" stroke-width="1.5"/>
+        <circle cx="120" cy="80" r="3.5" fill="#6b6b64"/>
+        <text x="145" y="72" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">1950s</text>
+        <rect x="145" y="82" width="670" height="56" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+        <text x="163" y="103" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">Hierarchical clustering &amp; dendrograms born</text>
+        <text x="163" y="123" font-family="'DM Sans', sans-serif" font-size="12" fill="#6b6b64">First formal grouping methods in biological taxonomy; Ward's linkage (1963) follows</text>
+
+        <!-- 1967 -->
+        <circle cx="120" cy="168" r="8" fill="#fff" stroke="#1a5fa8" stroke-width="1.5"/>
+        <circle cx="120" cy="168" r="3.5" fill="#1a5fa8"/>
+        <text x="145" y="160" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">1967</text>
+        <rect x="145" y="170" width="670" height="56" rx="8" fill="#e6eef8" stroke="rgba(26,95,168,0.2)" stroke-width="1"/>
+        <text x="163" y="191" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">k-means algorithm — MacQueen</text>
+        <text x="163" y="211" font-family="'DM Sans', sans-serif" font-size="12" fill="#1a5fa8">Centroid-based partitional clustering; deceptively simple, still widely used today</text>
+
+        <!-- 1970s -->
+        <circle cx="120" cy="256" r="8" fill="#fff" stroke="#6b6b64" stroke-width="1.5"/>
+        <circle cx="120" cy="256" r="3.5" fill="#6b6b64"/>
+        <text x="145" y="248" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">1970s</text>
+        <rect x="145" y="258" width="670" height="56" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+        <text x="163" y="279" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">Agglomerative linkage strategies formalized</text>
+        <text x="163" y="299" font-family="'DM Sans', sans-serif" font-size="12" fill="#6b6b64">Single, complete, and average linkage defined; foundations for modern hierarchical clustering</text>
+
+        <!-- 1996 -->
+        <circle cx="120" cy="344" r="8" fill="#fff" stroke="#b86a10" stroke-width="1.5"/>
+        <circle cx="120" cy="344" r="3.5" fill="#b86a10"/>
+        <text x="145" y="336" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">1996</text>
+        <rect x="145" y="346" width="670" height="56" rx="8" fill="#fdf3e4" stroke="rgba(184,106,16,0.2)" stroke-width="1"/>
+        <text x="163" y="367" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">DBSCAN — Ester, Kriegel, Sander, Xu</text>
+        <text x="163" y="387" font-family="'DM Sans', sans-serif" font-size="12" fill="#b86a10">Density-based; discovers arbitrary-shape clusters; explicit noise handling</text>
+
+        <!-- 2003 -->
+        <circle cx="120" cy="432" r="8" fill="#fff" stroke="#5a4fcf" stroke-width="1.5"/>
+        <circle cx="120" cy="432" r="3.5" fill="#5a4fcf"/>
+        <text x="145" y="424" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">2003</text>
+
+        <rect x="145" y="434" width="320" height="64" rx="8" fill="#eeecfb" stroke="rgba(90,79,207,0.2)" stroke-width="1"/>
+        <text x="163" y="455" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">LDA — Blei, Ng, Jordan</text>
+        <text x="163" y="475" font-family="'DM Sans', sans-serif" font-size="12" fill="#5a4fcf">
+          <tspan x="163" dy="0">Probabilistic topic models;</tspan>
+          <tspan x="163" dy="16">docs as latent topic mixtures</tspan>
+        </text>
+
+        <!-- right col 2003 -->
+        <rect x="490" y="434" width="325" height="64" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+        <text x="508" y="455" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">HDBSCAN — Campello et al.</text>
+        <text x="508" y="475" font-family="'DM Sans', sans-serif" font-size="12" fill="#6b6b64">
+          <tspan x="508" dy="0">Hierarchical density;</tspan>
+          <tspan x="508" dy="16">handles variable-density clusters</tspan>
+        </text>
+
+        <!-- 2013–2018+ -->
+        <circle cx="120" cy="540" r="8" fill="#fff" stroke="#1d7a6a" stroke-width="1.5"/>
+        <circle cx="120" cy="540" r="3.5" fill="#1d7a6a"/>
+        <text x="145" y="532" font-family="'DM Mono', monospace" font-size="11" fill="#9b9b92">2013–2018+</text>
+
+        <rect x="145" y="542" width="320" height="80" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.2)" stroke-width="1"/>
+        <text x="163" y="563" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">Embedding era begins</text>
+        <text x="163" y="583" font-family="'DM Sans', sans-serif" font-size="12" fill="#1d7a6a">
+          <tspan x="163" dy="0">Word2Vec → BERT → SBERT;</tspan>
+          <tspan x="163" dy="16">semantic vectors replace sparse counts</tspan>
+        </text>
+
+        <!-- right col 2013–2018+ -->
+        <rect x="490" y="542" width="325" height="80" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.2)" stroke-width="1"/>
+        <text x="508" y="563" font-family="'DM Sans', sans-serif" font-size="13" font-weight="500" fill="#1a1a18">Modern production pipelines</text>
+        <text x="508" y="583" font-family="'DM Sans', sans-serif" font-size="12" fill="#1d7a6a">
+          <tspan x="508" dy="0">Embeddings + Agglomerative;</tspan>
+          <tspan x="508" dy="16">streaming-ready; this blog's focus</tspan>
+        </text>
+      </svg>
+    </div>
+    <p class="caption">From dendrograms to dense vectors — seven decades of clustering evolution leading to today's production NLP systems.</p>
+  </div>
+</div>
+
+<div class="container">
+<article class="prose">
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#6b6b64"></div>
+    <div class="timeline-year">1950s–1960s</div>
+    <div class="timeline-title">Hierarchical clustering emerges</div>
+    <div class="timeline-body">The earliest clustering algorithms came from taxonomy and biology. Researchers needed ways to group species by similarity. Dendrograms — tree structures that visualize merge history — became the primary tool. Ward's minimum-variance linkage in 1963 extended these ideas into a more general framework that is still used today.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#1a5fa8"></div>
+    <div class="timeline-year">1967</div>
+    <div class="timeline-title">k-means — the algorithm everyone knows</div>
+    <div class="timeline-body">MacQueen introduced k-means, a deceptively simple algorithm: assign points to the nearest centroid, recompute centroids, repeat. Despite its limitations — fixed k, spherical cluster assumption, sensitivity to initialisation — k-means became the default clustering workhorse for decades and remains heavily used in NLP pipelines.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#6b6b64"></div>
+    <div class="timeline-year">1970s</div>
+    <div class="timeline-title">Linkage strategies are formalized</div>
+    <div class="timeline-body">Single linkage, complete linkage, and average linkage were rigorously defined, giving practitioners a toolkit for controlling the shape and compactness of clusters in hierarchical methods. Average linkage — the strategy most relevant to this blog — emerged as the most balanced choice for real-world applications.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#b86a10"></div>
+    <div class="timeline-year">1996</div>
+    <div class="timeline-title">DBSCAN — density beats distance</div>
+    <div class="timeline-body">Ester, Kriegel, Sander, and Xu introduced DBSCAN (Density-Based Spatial Clustering of Applications with Noise). Unlike k-means, DBSCAN can find clusters of arbitrary shapes and explicitly labels outliers as noise. It does not require specifying the number of clusters in advance — a significant practical advantage. HDBSCAN, a hierarchical extension, appeared in 2013.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#5a4fcf"></div>
+    <div class="timeline-year">2003</div>
+    <div class="timeline-title">LDA — latent topic structure for text</div>
+    <div class="timeline-body">Blei, Ng, and Jordan's Latent Dirichlet Allocation transformed how practitioners thought about text. Instead of raw word counts, LDA represented each document as a mixture of latent topics. Each topic was a probability distribution over words. This gave NLP systems a compact, interpretable representation — and directly informed the first approach discussed in this blog.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:#1d7a6a"></div>
+    <div class="timeline-year">2013 — present</div>
+    <div class="timeline-title">The embedding era</div>
+    <div class="timeline-body">Word2Vec (2013) introduced dense word vectors learned from large corpora. BERT (2018) brought full contextual embeddings. Sentence-BERT (SBERT, 2019) made sentence-level semantic similarity practical at scale. These models fundamentally changed text clustering: instead of learning representations from scratch, engineers now start with pre-trained models that already encode rich semantic knowledge.</div>
+  </div>
+</div>
+
+<div class="callout callout-amber">
+  <div class="callout-title">Why this history matters</div>
+  <p>The two approaches compared in this blog are not isolated inventions. The LDA pipeline stands on 50 years of statistical NLP. The embedding pipeline stands on 70 years of clustering theory <em>plus</em> a decade of deep learning. Understanding the lineage helps you reason about what each approach can and cannot do.</p>
+</div>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ WHY HARD ══════════ -->
+<h2>Why text clustering is hard in the real world</h2>
+
+<p>Before comparing the two approaches, it helps to define what makes text clustering difficult. For structured data, clustering can sometimes be straightforward because the dimensions are explicit and stable. Text is different. Human language is messy, high-dimensional, ambiguous, and constantly changing.</p>
+
+<ul>
+  <li><strong>High dimensionality:</strong> raw bag-of-words or TF-IDF vectors can be extremely sparse and large.</li>
+  <li><strong>Lexical variation:</strong> two documents can describe the same event using different wording.</li>
+  <li><strong>Semantic ambiguity:</strong> two documents may use similar words but refer to different real-world incidents.</li>
+  <li><strong>Unknown number of clusters:</strong> in most production cases, we do not know in advance how many groups exist.</li>
+  <li><strong>Streaming behaviour:</strong> new documents keep arriving, so clusters must evolve.</li>
+  <li><strong>Operational constraints:</strong> latency, compute cost, scheduling, monitoring, and downstream consumers all matter.</li>
+</ul>
+
+<p>Because of this, a strong clustering system is never just a mathematical algorithm. It is a full pipeline decision.</p>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ TEXT REPRESENTATION VISUAL ══════════ -->
+</article>
+</div>
+
+<div class="container-wide">
+  <div class="visual-card">
+    <span class="visual-card-label">Visual 2 — Text representation evolution</span>
+    <div class="svg-wrap">
+    <svg viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9b9b92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Era labels -->
+      <text x="86" y="22" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">1990s</text>
+      <text x="222" y="22" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">1990s</text>
+      <text x="390" y="22" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">2003</text>
+      <text x="570" y="22" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">2013</text>
+      <text x="754" y="22" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">2018 →</text>
+
+      <!-- Boxes Row 1 -->
+      <rect x="24" y="36" width="124" height="80" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="86" y="64" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Bag of words</text>
+      <text x="86" y="84" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64" text-anchor="middle">Word counts</text>
+      <text x="86" y="102" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64" text-anchor="middle">Sparse, no order</text>
+
+      <line x1="148" y1="76" x2="158" y2="76" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr2)"/>
+
+      <rect x="160" y="36" width="124" height="80" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="222" y="64" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">TF-IDF</text>
+      <text x="222" y="84" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64" text-anchor="middle">Weighted counts</text>
+      <text x="222" y="102" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64" text-anchor="middle">Rarity penalized</text>
+
+      <line x1="284" y1="76" x2="326" y2="76" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr2)"/>
+
+      <rect x="328" y="36" width="124" height="80" rx="8" fill="#eeecfb" stroke="rgba(90,79,207,0.25)" stroke-width="1"/>
+      <text x="390" y="64" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">LDA topics</text>
+      <text x="390" y="84" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Topic mixtures</text>
+      <text x="390" y="102" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Dense, latent</text>
+
+      <line x1="452" y1="76" x2="494" y2="76" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr2)"/>
+
+      <rect x="496" y="36" width="148" height="80" rx="8" fill="#e6eef8" stroke="rgba(26,95,168,0.25)" stroke-width="1"/>
+      <text x="570" y="64" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Word2Vec</text>
+      <text x="570" y="84" font-family="'DM Sans',sans-serif" font-size="11" fill="#1a5fa8" text-anchor="middle">Word vectors</text>
+      <text x="570" y="102" font-family="'DM Sans',sans-serif" font-size="11" fill="#1a5fa8" text-anchor="middle">Semantic algebra</text>
+
+      <line x1="644" y1="76" x2="670" y2="76" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr2)"/>
+
+      <rect x="672" y="36" width="164" height="80" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.25)" stroke-width="2"/>
+      <text x="754" y="64" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">BERT / SBERT</text>
+      <text x="754" y="84" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Dense context</text>
+      <text x="754" y="102" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Paraphrase-aware</text>
+
+      <!-- Property rows -->
+      <text x="24" y="145" font-family="'DM Sans',sans-serif" font-size="11" fill="#9b9b92">Semantic richness</text>
+      <line x1="168" y1="145" x2="836" y2="145" stroke="#e8e5de" stroke-width="1" marker-end="url(#arr2)"/>
+      <text x="168" y="160" font-family="'DM Sans',sans-serif" font-size="10" fill="#9b9b92">none</text>
+      <text x="810" y="160" font-family="'DM Sans',sans-serif" font-size="10" fill="#1d7a6a">very high</text>
+
+      <text x="24" y="188" font-family="'DM Sans',sans-serif" font-size="11" fill="#9b9b92">Infra complexity</text>
+      <line x1="168" y1="188" x2="836" y2="188" stroke="#e8e5de" stroke-width="1" marker-end="url(#arr2)"/>
+      <text x="168" y="203" font-family="'DM Sans',sans-serif" font-size="10" fill="#9b9b92">none</text>
+      <text x="804" y="203" font-family="'DM Sans',sans-serif" font-size="10" fill="#c04830">very high</text>
+
+      <text x="24" y="231" font-family="'DM Sans',sans-serif" font-size="11" fill="#9b9b92">Interpretability</text>
+      <line x1="168" y1="231" x2="836" y2="231" stroke="#e8e5de" stroke-width="1"/>
+      <line x1="836" y1="231" x2="168" y2="231" stroke="#e8e5de" stroke-width="1" marker-end="url(#arr2)"/>
+      <text x="168" y="246" font-family="'DM Sans',sans-serif" font-size="10" fill="#1d7a6a">very high</text>
+      <text x="810" y="246" font-family="'DM Sans',sans-serif" font-size="10" fill="#9b9b92">low</text>
+
+      <rect x="328" y="264" width="124" height="28" rx="6" fill="#eeecfb" stroke="rgba(90,79,207,0.2)" stroke-width="1"/>
+      <text x="390" y="278" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Approach 1 in this blog</text>
+
+      <rect x="672" y="264" width="164" height="28" rx="6" fill="#e4f4f1" stroke="rgba(29,122,106,0.2)" stroke-width="1"/>
+      <text x="754" y="278" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Approach 2 in this blog</text>
+    </svg>
+    </div>
+    <p class="caption">The representation layer is the most consequential decision in any text clustering system. It determines what "similarity" even means.</p>
+  </div>
+</div>
+
+<div class="container">
+<article class="prose">
+
+<!-- ══════════ APPROACH 1 ══════════ -->
+<span class="section-label">Approach 1</span>
+<h2>LDA-based story clustering</h2>
+
+<p>Imagine grouping news articles about the same event — written by different publishers with different wording, style, and emphasis. The pipeline looks like this:</p>
+
+<div class="pipeline">
+  text <span class="pipe-arrow">→</span> bag-of-words <span class="pipe-arrow">→</span> LDA topic representation <span class="pipe-arrow">→</span> approximate nearest-neighbor search <span class="pipe-arrow">→</span> clusters
+</div>
+
+<p>At the heart of this design is <strong>Latent Dirichlet Allocation (LDA)</strong>. Instead of representing a document as a huge sparse vector of raw words, it represents the document as a mixture of latent topics. A topic, in turn, is a probability distribution over words.</p>
+
+<p>For example, a topic might emphasize words like <em>election, campaign, ballot, voters</em>. Another might emphasize <em>earthquake, magnitude, rescue, aftershock</em>. A document is then represented as a weighted combination of these topics — something like "this article is 60% politics, 25% policy, 15% international relations."</p>
+
+<div class="callout callout-purple">
+  <div class="callout-title">Why LDA was a strong design</div>
+  <p>Bag-of-words vectors are too high-dimensional for efficient direct similarity search. LDA provides a compact, semantic, lower-dimensional representation. Two stories about the same event may not share many exact words, but they may still occupy similar positions in topic space.</p>
+</div>
+
+<h3>Strengths of this approach</h3>
+<ol>
+  <li><strong>Unsupervised</strong> — no labeled pairs required</li>
+  <li><strong>Interpretable</strong> — topics can be inspected by engineers and stakeholders</li>
+  <li><strong>Dimensionality reduction</strong> — compresses via semantic structure, not mechanical compression</li>
+  <li><strong>Scalable retrieval</strong> — approximate nearest-neighbor search is manageable in topic space</li>
+  <li><strong>Fits long-form text</strong> — topic mixtures work well when documents are substantial</li>
+</ol>
+
+<h3>The core limitation</h3>
+
+<div class="pullquote"><p>Topic similarity is not the same as event similarity.</p></div>
+
+<p>Two articles about different floods in different countries may share a very similar topic mixture — but from a product perspective, they should not be clustered into the same story. This is where LDA begins to show its limits: it has no mechanism to distinguish between "these documents are about the same type of event" and "these documents are about the exact same incident."</p>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ APPROACH 2 ══════════ -->
+<span class="section-label">Approach 2</span>
+<h2>Embedding-based trend clustering with Agglomerative Clustering</h2>
+
+<p>The modern pipeline shifts the philosophy entirely. Instead of learning topic mixtures, it starts with embedding vectors designed to place semantically similar texts close to one another in vector space.</p>
+
+<div class="pipeline">
+  text <span class="pipe-arrow">→</span> cleaning/normalization <span class="pipe-arrow">→</span> semantic embeddings <span class="pipe-arrow">→</span> agglomerative clustering <span class="pipe-arrow">→</span> cluster updates <span class="pipe-arrow">→</span> summarization / publishing
+</div>
+
+<p>Consider these two texts:</p>
+<ul>
+  <li>"Power outage shuts down central station"</li>
+  <li>"Main transit hub closed after electrical failure"</li>
+</ul>
+
+<p>A bag-of-words model sees almost no overlap. A good embedding model places them very close together — because they describe the same event semantically, not lexically.</p>
+
+</article>
+</div>
+
+<!-- VECTOR SPACE VISUAL -->
+<div class="container-wide">
+  <div class="visual-card">
+    <span class="visual-card-label">Visual 3 — Semantic vector space</span>
+    <div class="svg-wrap">
+    <svg viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9b9b92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Axes -->
+      <rect x="40" y="30" width="480" height="400" rx="10" fill="none" stroke="#e8e5de" stroke-width="1"/>
+      <line x1="40" y1="430" x2="520" y2="430" stroke="#e8e5de" stroke-width="1.2" marker-end="url(#arr3)"/>
+      <line x1="40" y1="430" x2="40" y2="30" stroke="#e8e5de" stroke-width="1.2" marker-end="url(#arr3)"/>
+      <text x="528" y="434" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92">dim 1</text>
+      <text x="20" y="28" font-family="'DM Mono',monospace" font-size="10" fill="#9b9b92" text-anchor="middle">dim 2</text>
+
+      <!-- Cluster 1: Infrastructure/Power -->
+      <circle cx="135" cy="110" r="50" fill="none" stroke="#1d7a6a" stroke-width="1" stroke-dasharray="5 3" opacity="0.5"/>
+      <circle cx="120" cy="95" r="5" fill="#1d7a6a"/>
+      <text x="75" y="72" font-family="'DM Sans',sans-serif" font-size="11" fill="#085041">"Power outage</text>
+      <text x="75" y="86" font-family="'DM Sans',sans-serif" font-size="11" fill="#085041">central station"</text>
+      <circle cx="155" cy="130" r="5" fill="#1d7a6a"/>
+      <text x="140" y="152" font-family="'DM Sans',sans-serif" font-size="11" fill="#085041">"Electrical failure</text>
+      <text x="140" y="166" font-family="'DM Sans',sans-serif" font-size="11" fill="#085041">transit hub"</text>
+      <line x1="120" y1="95" x2="155" y2="130" stroke="#1d7a6a" stroke-width="0.6" opacity="0.5"/>
+      <circle cx="108" cy="135" r="4" fill="#1d7a6a" opacity="0.7"/>
+      <text x="68" y="148" font-family="'DM Sans',sans-serif" font-size="10" fill="#0F6E56">"Grid down metro"</text>
+      <text x="135" y="192" font-family="'DM Sans',sans-serif" font-size="10" fill="#0F6E56" text-anchor="middle" font-style="italic">Infrastructure cluster</text>
+
+      <!-- Cluster 2: Politics -->
+      <circle cx="390" cy="110" r="52" fill="none" stroke="#5a4fcf" stroke-width="1" stroke-dasharray="5 3" opacity="0.5"/>
+      <circle cx="372" cy="88" r="5" fill="#5a4fcf"/>
+      <text x="345" y="68" font-family="'DM Sans',sans-serif" font-size="11" fill="#3C3489">"Election results</text>
+      <text x="345" y="82" font-family="'DM Sans',sans-serif" font-size="11" fill="#3C3489">announced"</text>
+      <circle cx="415" cy="120" r="5" fill="#5a4fcf"/>
+      <text x="395" y="142" font-family="'DM Sans',sans-serif" font-size="11" fill="#3C3489">"Voters cast</text>
+      <text x="395" y="156" font-family="'DM Sans',sans-serif" font-size="11" fill="#3C3489">ballots"</text>
+      <circle cx="378" cy="140" r="4" fill="#5a4fcf" opacity="0.7"/>
+      <line x1="372" y1="88" x2="415" y2="120" stroke="#5a4fcf" stroke-width="0.6" opacity="0.5"/>
+      <text x="390" y="194" font-family="'DM Sans',sans-serif" font-size="10" fill="#534AB7" text-anchor="middle" font-style="italic">Politics cluster</text>
+
+      <!-- Cluster 3: Disaster -->
+      <circle cx="175" cy="340" r="50" fill="none" stroke="#c04830" stroke-width="1" stroke-dasharray="5 3" opacity="0.5"/>
+      <circle cx="155" cy="318" r="5" fill="#c04830"/>
+      <text x="80" y="302" font-family="'DM Sans',sans-serif" font-size="11" fill="#712B13">"Earthquake 6.2</text>
+      <text x="80" y="316" font-family="'DM Sans',sans-serif" font-size="11" fill="#712B13">magnitude"</text>
+      <circle cx="196" cy="352" r="5" fill="#c04830"/>
+      <text x="165" y="375" font-family="'DM Sans',sans-serif" font-size="11" fill="#712B13">"Rescue teams</text>
+      <text x="165" y="389" font-family="'DM Sans',sans-serif" font-size="11" fill="#712B13">deployed"</text>
+      <line x1="155" y1="318" x2="196" y2="352" stroke="#c04830" stroke-width="0.6" opacity="0.5"/>
+      <text x="175" y="415" font-family="'DM Sans',sans-serif" font-size="10" fill="#993C1D" text-anchor="middle" font-style="italic">Disaster cluster</text>
+
+      <!-- Cluster 4: Finance -->
+      <circle cx="400" cy="335" r="50" fill="none" stroke="#1a5fa8" stroke-width="1" stroke-dasharray="5 3" opacity="0.5"/>
+      <circle cx="380" cy="312" r="5" fill="#1a5fa8"/>
+      <text x="342" y="296" font-family="'DM Sans',sans-serif" font-size="11" fill="#042C53">"Earnings beat</text>
+      <text x="342" y="310" font-family="'DM Sans',sans-serif" font-size="11" fill="#042C53">forecasts"</text>
+      <circle cx="420" cy="355" r="5" fill="#1a5fa8"/>
+      <text x="396" y="378" font-family="'DM Sans',sans-serif" font-size="11" fill="#042C53">"Q3 revenue</text>
+      <text x="396" y="392" font-family="'DM Sans',sans-serif" font-size="11" fill="#042C53">surges"</text>
+      <line x1="380" y1="312" x2="420" y2="355" stroke="#1a5fa8" stroke-width="0.6" opacity="0.5"/>
+      <text x="400" y="415" font-family="'DM Sans',sans-serif" font-size="10" fill="#185FA5" text-anchor="middle" font-style="italic">Finance cluster</text>
+
+      <!-- Insight panel -->
+      <rect x="560" y="30" width="280" height="130" rx="10" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="578" y="55" font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#1a1a18">LDA clusters by...</text>
+      <text x="578" y="74" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">shared word patterns</text>
+      <text x="578" y="92" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">(topic overlap)</text>
+      <line x1="560" y1="108" x2="840" y2="108" stroke="#e8e5de" stroke-width="0.8"/>
+      <text x="578" y="126" font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#1a1a18">Embeddings cluster by...</text>
+      <text x="578" y="144" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a">semantic meaning</text>
+
+      <rect x="560" y="186" width="280" height="120" rx="10" fill="#e4f4f1" stroke="rgba(29,122,106,0.2)" stroke-width="1"/>
+      <text x="578" y="210" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">These two texts share no words:</text>
+      <text x="578" y="234" font-family="'DM Sans',sans-serif" font-size="12" font-weight="500" fill="#085041">"Power outage..."</text>
+      <text x="578" y="254" font-family="'DM Sans',sans-serif" font-size="12" font-weight="500" fill="#085041">"Electrical failure..."</text>
+      <text x="578" y="280" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">Yet embeddings land them</text>
+      <text x="578" y="298" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">in the same cluster →</text>
+
+      <rect x="560" y="332" width="280" height="98" rx="10" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="578" y="356" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">LDA limitation:</text>
+      <text x="578" y="376" font-family="'DM Sans',sans-serif" font-size="12" font-weight="500" fill="#c04830">Two different floods</text>
+      <text x="578" y="396" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">might cluster together</text>
+      <text x="578" y="414" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64">because topics overlap</text>
+    </svg>
+    </div>
+    <p class="caption">In embedding space, documents cluster by semantic meaning — not keyword overlap. "Power outage" and "electrical failure" land near each other even though they share no words. LDA cannot make this distinction.</p>
+  </div>
+</div>
+
+<!-- PIPELINE COMPARISON VISUAL -->
+<div class="container-wide">
+  <div class="visual-card">
+    <span class="visual-card-label">Visual 4 — Pipeline comparison</span>
+    <div class="svg-wrap">
+    <svg viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9b9b92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Titles -->
+      <text x="216" y="24" font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#5a4fcf" text-anchor="middle">LDA-based approach</text>
+      <text x="646" y="24" font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#1d7a6a" text-anchor="middle">Embedding-based approach</text>
+
+      <!-- Divider -->
+      <line x1="430" y1="36" x2="430" y2="450" stroke="#e8e5de" stroke-width="1" stroke-dasharray="5 3"/>
+
+      <!-- LDA Pipeline -->
+      <rect x="40" y="46" width="350" height="48" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="215" y="70" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Raw text documents</text>
+      <line x1="215" y1="94" x2="215" y2="114" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="40" y="116" width="350" height="56" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="215" y="138" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Bag-of-words vectorization</text>
+      <text x="215" y="158" font-family="'DM Sans',sans-serif" font-size="11" fill="#6b6b64" text-anchor="middle">Sparse, high-dimensional</text>
+      <line x1="215" y1="172" x2="215" y2="192" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="40" y="194" width="350" height="56" rx="8" fill="#eeecfb" stroke="rgba(90,79,207,0.25)" stroke-width="1"/>
+      <text x="215" y="216" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">LDA topic inference</text>
+      <text x="215" y="236" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Document → topic mixture vector</text>
+      <line x1="215" y1="250" x2="215" y2="270" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="40" y="272" width="350" height="56" rx="8" fill="#eeecfb" stroke="rgba(90,79,207,0.25)" stroke-width="1"/>
+      <text x="215" y="294" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Approx. nearest-neighbor search</text>
+      <text x="215" y="314" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Topic space similarity retrieval</text>
+      <line x1="215" y1="328" x2="215" y2="348" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="40" y="350" width="350" height="48" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="215" y="374" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Story cluster groups</text>
+
+      <!-- LDA props -->
+      <rect x="40" y="420" width="350" height="28" rx="6" fill="none" stroke="rgba(90,79,207,0.2)" stroke-width="1"/>
+      <text x="215" y="434" font-family="'DM Sans',sans-serif" font-size="11" fill="#5a4fcf" text-anchor="middle">Interpretable · Offline · Broad themes</text>
+
+      <!-- EMB Pipeline -->
+      <rect x="470" y="46" width="350" height="48" rx="8" fill="#f2f0eb" stroke="#e8e5de" stroke-width="1"/>
+      <text x="645" y="70" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Raw text documents</text>
+      <line x1="645" y1="94" x2="645" y2="114" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="470" y="116" width="350" height="56" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.25)" stroke-width="1"/>
+      <text x="645" y="138" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Semantic embedding model</text>
+      <text x="645" y="158" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Dense contextual vectors (SBERT)</text>
+      <line x1="645" y1="172" x2="645" y2="192" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="470" y="194" width="350" height="56" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.25)" stroke-width="1"/>
+      <text x="645" y="216" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Agglomerative clustering</text>
+      <text x="645" y="236" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Average linkage + cosine threshold</text>
+      <line x1="645" y1="250" x2="645" y2="270" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="470" y="272" width="350" height="56" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.25)" stroke-width="1"/>
+      <text x="645" y="294" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Incremental cluster updates</text>
+      <text x="645" y="314" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">New signals merged or split</text>
+      <line x1="645" y1="328" x2="645" y2="348" stroke="#9b9b92" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+      <rect x="470" y="350" width="350" height="48" rx="8" fill="#e4f4f1" stroke="rgba(29,122,106,0.25)" stroke-width="1"/>
+      <text x="645" y="374" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#1a1a18" text-anchor="middle">Trend summaries · Alerts · Search</text>
+
+      <!-- EMB props -->
+      <rect x="470" y="420" width="350" height="28" rx="6" fill="none" stroke="rgba(29,122,106,0.2)" stroke-width="1"/>
+      <text x="645" y="434" font-family="'DM Sans',sans-serif" font-size="11" fill="#1d7a6a" text-anchor="middle">Semantic · Streaming · Event-level</text>
+    </svg>
+    </div>
+    <p class="caption">The two pipelines diverge at the representation layer. The embedding pipeline adds an incremental update step that makes it suitable for real-time production systems — something the static LDA design cannot easily support.</p>
+  </div>
+</div>
+
+<div class="container">
+<article class="prose">
+
+<h3>Why Agglomerative Clustering fits this setup</h3>
+<p>Agglomerative Clustering starts by treating each item as its own cluster, then progressively merges the closest clusters according to a distance metric and linkage strategy. It is attractive for text because it does not require a predefined number of clusters, works naturally with similarity thresholds, and supports variable cluster sizes.</p>
+
+<h3>Why not k-means or DBSCAN?</h3>
+<p>K-means assumes a fixed number of clusters and roughly spherical structure — neither is realistic for real text streams. DBSCAN and HDBSCAN can be difficult to tune in high-dimensional embedding spaces; they often over-fragment data or become highly sensitive to parameter settings. Agglomerative clustering with average linkage tends to be the more stable choice for semantically meaningful cluster formation.</p>
+
+<h3>The real strength: evolving clusters</h3>
+<p>In a real trend-detection system, new signals arrive continuously. The system cannot afford to recompute everything from scratch each time. A practical pipeline ingests new signals, generates embeddings, compares them against existing cluster representations, merges or creates as needed, updates centroids, and publishes mature clusters. This turns clustering into a <em>living system</em> rather than a one-time experiment.</p>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ COMPARISON ══════════ -->
+<h2>Side-by-side comparison</h2>
+
+</article>
+</div>
+
+<!-- RADAR CHART -->
+<div class="container-wide">
+  <div class="visual-card">
+    <span class="visual-card-label">Visual 5 — Capability comparison</span>
+    <div style="max-width:540px;margin:0 auto">
+      <div id="radarWrap"><canvas id="radarChart"></canvas></div>
+    </div>
+    <div style="display:flex;gap:2rem;justify-content:center;margin-top:1rem;font-size:0.82rem;color:var(--ink-3)">
+      <span style="display:flex;align-items:center;gap:0.5rem"><span style="width:14px;height:14px;border-radius:3px;background:#5a4fcf;display:inline-block"></span>LDA-based</span>
+      <span style="display:flex;align-items:center;gap:0.5rem"><span style="width:14px;height:14px;border-radius:3px;background:#1d7a6a;display:inline-block"></span>Embedding-based</span>
+    </div>
+    <p class="caption">No single approach wins across all dimensions. The choice depends on which properties matter most for your specific product and data.</p>
+  </div>
+</div>
+
+<div class="container">
+<article class="prose">
+
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>LDA-based</th>
+      <th>Embedding-based</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Representation</strong><br><span class="dim">What does "similar" mean?</span></td>
+      <td>Topic mixture overlap<br><span class="badge badge-win">interpretable</span></td>
+      <td>Semantic vector proximity<br><span class="badge badge-win">paraphrase-aware</span></td>
+    </tr>
+    <tr>
+      <td><strong>Interpretability</strong><br><span class="dim">Can you explain it?</span></td>
+      <td>Topics are human-readable word lists<br><span class="badge badge-win">clear winner</span></td>
+      <td>Opaque — similarity is distributional<br><span class="badge badge-ok">harder to explain</span></td>
+    </tr>
+    <tr>
+      <td><strong>Streaming readiness</strong><br><span class="dim">Can clusters evolve?</span></td>
+      <td>Designed for offline batch workflows<br><span class="badge badge-ok">limited</span></td>
+      <td>Incremental updates native to design<br><span class="badge badge-win">clear winner</span></td>
+    </tr>
+    <tr>
+      <td><strong>Short text quality</strong><br><span class="dim">Works on tweets/alerts?</span></td>
+      <td>Topic mixtures degrade on sparse text<br><span class="badge badge-ok">prefers long docs</span></td>
+      <td>Works well even on single sentences<br><span class="badge badge-win">clear winner</span></td>
+    </tr>
+    <tr>
+      <td><strong>Infra complexity</strong><br><span class="dim">Easier to deploy?</span></td>
+      <td>Classical statistical model, no GPU<br><span class="badge badge-win">simpler</span></td>
+      <td>Requires model serving + vector store<br><span class="badge badge-ok">higher cost</span></td>
+    </tr>
+    <tr>
+      <td><strong>Event-level precision</strong><br><span class="dim">Same incident vs same topic?</span></td>
+      <td>Cannot reliably distinguish<br><span class="badge badge-ok">topic-level only</span></td>
+      <td>Much better at fine-grained identity<br><span class="badge badge-win">clear winner</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ DECISION FRAMEWORK ══════════ -->
+<h2>A deeper reasoning framework for choosing between them</h2>
+
+<div class="decision-grid">
+  <div class="decision-card">
+    <div class="q">Is the goal broad topic discovery or fine-grained event grouping?</div>
+    <div class="a-lda">Broad themes → LDA</div>
+    <div class="a-emb">Precise event grouping → Embeddings</div>
+  </div>
+  <div class="decision-card">
+    <div class="q">Is interpretability a product requirement?</div>
+    <div class="a-lda">Yes, stakeholders need it → LDA</div>
+    <div class="a-emb">No → Embeddings usually stronger</div>
+  </div>
+  <div class="decision-card">
+    <div class="q">Are documents long and content-rich, or short and noisy?</div>
+    <div class="a-lda">Long-form text → LDA more comfortable</div>
+    <div class="a-emb">Short operational text → Embeddings win</div>
+  </div>
+  <div class="decision-card">
+    <div class="q">Is the workflow offline or streaming?</div>
+    <div class="a-lda">Offline batch → simpler pipelines viable</div>
+    <div class="a-emb">Streaming → Embeddings almost always</div>
+  </div>
+  <div class="decision-card">
+    <div class="q">What downstream actions depend on clusters?</div>
+    <div class="a-lda">Analysis only → Either approach</div>
+    <div class="a-emb">Alerts, summaries, routing → Embeddings</div>
+  </div>
+  <div class="decision-card">
+    <div class="q">What are your infrastructure constraints?</div>
+    <div class="a-lda">Limited infra or no GPU → LDA</div>
+    <div class="a-emb">Model serving available → Embeddings</div>
+  </div>
+</div>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ USE CASES ══════════ -->
+<h2>When each approach is the better choice</h2>
+
+<div class="use-case-grid">
+  <div class="use-case-card lda">
+    <div class="uc-label">LDA-based is better for</div>
+    <ul>
+      <li>Long-form article clustering</li>
+      <li>Unsupervised corpus exploration</li>
+      <li>Explainable clustering systems</li>
+      <li>Lower-infrastructure environments</li>
+      <li>Broad thematic organization</li>
+    </ul>
+  </div>
+  <div class="use-case-card emb">
+    <div class="uc-label">Embedding-based is better for</div>
+    <ul>
+      <li>Trend detection systems</li>
+      <li>Incident &amp; alert consolidation</li>
+      <li>Threat intelligence &amp; risk monitoring</li>
+      <li>Customer support issue clustering</li>
+      <li>Social listening &amp; real-time signals</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ TWO PHILOSOPHIES ══════════ -->
+<h2>These are two different philosophies</h2>
+
+<p>At first glance, these approaches may look like two alternative clustering algorithms. They are not. They are really two different philosophies of how to build a text clustering system.</p>
+
+<div class="callout callout-purple">
+  <div class="callout-title">Philosophy 1 — Topic-space clustering</div>
+  <p>Compress documents into interpretable latent topics, then cluster nearby items in that low-dimensional topic space. Its strength is <strong>structure and interpretability</strong>.</p>
+</div>
+
+<div class="callout callout-teal">
+  <div class="callout-title">Philosophy 2 — Semantic-stream clustering</div>
+  <p>Represent each text in a semantically rich vector space, then incrementally form and evolve clusters using similarity-based hierarchical grouping. Its strength is <strong>semantic precision and production adaptability</strong>.</p>
+</div>
+
+<p>This distinction is more important than the names of the specific algorithms. The choice is not "old versus new." It is really: <em>topic-space organization</em> versus <em>semantic event/trend formation</em>.</p>
+
+<div class="divider"><span></span><span></span><span></span></div>
+
+<!-- ══════════ TAKEAWAY ══════════ -->
+<div class="takeaway">
+  <h3>Final takeaway</h3>
+  <p>Both approaches are valid. Both are intelligent. But they optimize for different realities.</p>
+  <p>The LDA-based approach is a strong classical solution for interpretable, unsupervised thematic clustering. It shines when the problem is broad document grouping and the system benefits from transparent topic structure.</p>
+  <p>The embedding + Agglomerative Clustering approach is a stronger modern solution for real-world semantic clustering, especially when data arrives continuously and clusters must evolve into usable product objects such as trends, summaries, or alerts.</p>
+  <p>If your problem is closer to editorial organization, corpus exploration, or explainable thematic grouping, LDA still deserves serious consideration. If your problem is closer to trend detection, incident grouping, or production intelligence systems, embeddings with hierarchical clustering are usually the better design.</p>
+  <p>In the end, the best clustering system is not the one with the most sophisticated algorithm name. It is the one whose assumptions match the shape of your data, the behaviour of your users, and the operational demands of your product. <strong>That is the real engineering lesson.</strong></p>
+</div>
+
+<div class="callout callout-amber">
+  <div class="callout-title">Note</div>
+  <p>This post compares two real-world clustering philosophies: a classical LDA-based story clustering pipeline and a modern embedding-based semantic trend pipeline. The goal is not to declare a universal winner, but to understand where each approach fits best and why.</p>
+</div>
+
+</article>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>Written by Vicky Suman &nbsp;·&nbsp; The Evolution of Text Representation: From Topic to Vectors</p>
+    <p style="margin-top:0.4rem">Enhanced with clustering history and data visualizations</p>
+  </div>
+</footer>
+
+<script>
+  const ctx = document.getElementById('radarChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: [
+          'Interpretability',
+          'Semantic precision',
+          'Streaming ready',
+          'Short text quality',
+          'Low infra cost',
+          'Event-level precision'
+        ],
+        datasets: [
+          {
+            label: 'LDA-based',
+            data: [9, 4, 3, 3, 8, 3],
+            backgroundColor: 'rgba(90,79,207,0.12)',
+            borderColor: '#5a4fcf',
+            pointBackgroundColor: '#5a4fcf',
+            pointRadius: 5,
+            borderWidth: 2
+          },
+          {
+            label: 'Embedding-based',
+            data: [3, 9, 9, 8, 3, 9],
+            backgroundColor: 'rgba(29,122,106,0.12)',
+            borderColor: '#1d7a6a',
+            pointBackgroundColor: '#1d7a6a',
+            pointRadius: 5,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          r: {
+            min: 0, max: 10,
+            ticks: {
+              stepSize: 2,
+              font: { size: 11, family: "'DM Sans', sans-serif" },
+              color: '#9b9b92',
+              backdropColor: 'transparent'
+            },
+            pointLabels: {
+              font: { size: 13, family: "'DM Sans', sans-serif" },
+              color: '#3d3d38'
+            },
+            grid: { color: 'rgba(26,26,24,0.08)' },
+            angleLines: { color: 'rgba(26,26,24,0.08)' }
+          }
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
