@@ -1,0 +1,121 @@
+[GLOBAL]
+pants_version = "2.24.0"
+pantsd = true
+build_file_prelude_globs = ["tools/pants-macros/*.py"]
+build_ignore = [
+    "docs/**/*",
+    ".git/**/*",
+]
+pants_ignore = [
+    "!generated",
+    "docs/**/*",
+    ".git/**/*",
+]
+
+docker_execution = true
+level = "info"
+pantsd_max_memory_usage = "32GiB"
+process_per_child_memory_usage = "32GiB"
+cache_content_behavior = "defer"
+print_stacktrace = true
+
+backend_packages.add = [
+    "pants.backend.build_files.fmt.black",
+    "pants.backend.python",
+    "pants.backend.experimental.python",
+    "pants.backend.python.lint.docformatter",
+    "pants.backend.experimental.python.lint.ruff.check",
+    "pants.backend.experimental.python.lint.ruff.format",
+    #  "pants.backend.python.lint.pydocstyle",
+    "pants.backend.python.lint.black",
+    "pants.backend.python.lint.flake8",
+    "pants.backend.python.lint.isort",
+    "pants.backend.python.typecheck.mypy",
+    "pants.backend.python.lint.autoflake",
+    "pants.backend.experimental.javascript",
+    "pants.backend.experimental.adhoc",
+    "pants.backend.shell",
+    "pants.backend.docker",
+    "pants.backend.codegen.protobuf.python",
+]
+
+[source]
+root_patterns = ["/"]
+
+[python]
+interpreter_constraints = ["==3.10.*"]
+enable_resolves = true
+default_resolve = "default_cpu"
+
+[python.resolves]
+default_cpu = "3rdParty/requirements-cpu.lock"
+
+[subprocess-environment]
+env_vars = [
+    "WORKSPACE_ROOT",
+    "AIRFLOW_GPL_UNIDECODE",
+    "HF_TOKEN"
+]
+
+[python-repos]
+indexes = [
+    "https://pypi.org/simple/"
+]
+
+[repl]
+shell = "ipython"
+
+
+[python-infer]
+use_rust_parser = true
+
+[pytest]
+args = ["-v", "--tb=short"]
+
+[ruff]
+args = ["--line-length=100"]
+
+[environments-preview.names]
+python_linux_amd64 = "//:python_linux_amd64"
+python_linux_arm64 = "//:python_linux_arm64"
+
+[pex]
+verbosity = 0
+venv_use_symlinks = true
+# This is off by default, but we want to dogfood it before switching on for everyone.
+
+[pex-cli]
+known_versions = [
+    "v2.33.4|macos_arm64|d6a4041d52732ea0a323db2bea3e6a5995391fed3bc1f2b81d84ee0bcbc16e7c|4589638",
+    "v2.33.4|linux_x86_64|d6a4041d52732ea0a323db2bea3e6a5995391fed3bc1f2b81d84ee0bcbc16e7c|4589638",
+]
+version = 'v2.33.4'
+
+[cli.alias]
+generate-lockfile-cpu = '--pantsrc-files=pants.cpu.toml generate-lockfiles --resolve=default_cpu'
+
+[docker]
+use_buildx = false
+tools = [
+    "docker",
+    "dirname",
+    "readlink",
+    "python3",
+    # These may be necessary if using Pyenv-installed Python.
+    "cut",
+    "sed",
+    "bash",
+]
+
+[flake8]
+args = [
+    #    W503 - > Line break before binary operator
+    #    E203 -> Whitespace before :
+    "--ignore W503,E203"
+]
+
+[python-protobuf]
+mypy_plugin = true
+
+[test]
+output = "all"
