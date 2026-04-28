@@ -1,0 +1,80 @@
+namespace: ai
+
+sentiment-classification:
+  enabled: true
+  name: sentiment-classification
+  replicaCount: 1
+
+  image:
+    repository: ai-sentiment
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  containerPort: 8080
+
+  env:
+    TRITON_HTTP_URL: "http://triton:8000"
+    TRITON_GRPC_URL: "triton:8001"
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+triton:
+  enabled: true
+  name: triton
+  replicaCount: 1
+
+  image:
+    repository: nvcr.io/nvidia/tritonserver
+    tag: "24.10-py3"
+    pullPolicy: IfNotPresent
+
+  runtimeClassName: nvidia
+
+  modelRepository:
+    hostPath: /mnt/models
+    mountPath: /models
+
+  args:
+    - tritonserver
+    - --model-repository=/models
+    - --strict-model-config=false
+    - --log-verbose=1
+
+  ports:
+    http: 8000
+    grpc: 8001
+    metrics: 8002
+
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: "8Gi"
+    requests:
+      memory: "4Gi"
+
+  service:
+    type: ClusterIP
+
+ingress:
+  enabled: false
+  className: traefik
+  host: fastapi.local
+  path: /
+
+imagePullSecrets: []

@@ -1,0 +1,9 @@
+sentence-transformers==2.6.1
+transformers==4.38.0
+numpy==1.26.3
+protobuf==5.29.5
+requests==2.32.2
+ray==2.40.0
+torch==2.1.1
+optimum[onnxruntime-gpu]==1.16.2
+onnx==1.15.0

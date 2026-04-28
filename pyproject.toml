@@ -1,0 +1,10 @@
+[tool.isort]
+profile = "black"
+line_length = 120
+group_by_package = true
+src_paths = ["ai"]
+split_on_trailing_comma = true
+lines_before_imports = 0
+
+[tool.black]
+line-length = 120
