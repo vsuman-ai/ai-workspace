@@ -2,8 +2,10 @@
 lint_target = "ai::"
 
 DEFAULT_CPU_RESOLVE = "default_cpu"
+DEFAULT_CUDA_RESOLVE = "default_cuda"
+DEFAULT_NEURON_RESOLVE = "default_neuron"
 
-ALL_RESOLVES = [DEFAULT_CPU_RESOLVE]
+ALL_RESOLVES = [DEFAULT_CPU_RESOLVE, DEFAULT_CUDA_RESOLVE, DEFAULT_NEURON_RESOLVE]
 
 ####################################################################################################
 # Requirements
@@ -16,6 +18,41 @@ python_requirements(
     overrides={
         "clean-text": {"modules": ["cleantext"]},
         "dspy-ai": {"modules": ["dspy"]},
+    },
+)
+python_requirements(
+    name="reqs_cpu",
+    source="3rdParty/requirements-cpu.txt",
+    resolve=DEFAULT_CPU_RESOLVE,
+    overrides={
+        "optimum": {"modules": ["optimum", "onnxruntime"]},
+        "transformers": {"modules": ["transformers", "tokenizers"]},
+        "protobuf": {"modules": ["google", "protobuf"]},
+        "google-api-python-client": {"modules": ["googleapiclient"]},
+        "sentence-transformers": {"modules": ["sentence_transformers"]},
+    },
+)
+
+python_requirements(
+    name="reqs_neuron",
+    source="3rdParty/requirements-neuron.txt",
+    resolve=DEFAULT_NEURON_RESOLVE,
+    overrides={
+        "optimum-neuron": {"modules": ["optimum.neuron", "torch", "optimum", "transformers" ]},
+        "protobuf": {"modules": ["google", "protobuf"]},
+        "sentence-transformers": {"modules": ["sentence_transformers"]},
+    },
+)
+
+python_requirements(
+    name="reqs_cuda",
+    source="3rdParty/requirements-cuda.txt",
+    resolve=DEFAULT_CUDA_RESOLVE,
+    overrides={
+        "optimum": {"modules": ["optimum", "onnxruntime"]},
+        "transformers": {"modules": ["transformers", "tokenizers"]},
+        "protobuf": {"modules": ["google", "protobuf"]},
+        "sentence-transformers": {"modules": ["sentence_transformers"]},
     },
 )
 

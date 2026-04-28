@@ -49,12 +49,13 @@ default_resolve = "default_cpu"
 
 [python.resolves]
 default_cpu = "3rdParty/requirements-cpu.lock"
+default_cuda = "3rdParty/requirements-cuda.lock"
+default_neuron = "3rdParty/requirements-neuron.lock"
 
 [subprocess-environment]
 env_vars = [
     "WORKSPACE_ROOT",
     "AIRFLOW_GPL_UNIDECODE",
-    "HF_TOKEN"
 ]
 
 [python-repos]
@@ -86,10 +87,26 @@ venv_use_symlinks = true
 
 [pex-cli]
 known_versions = [
-    "v2.33.4|macos_arm64|d6a4041d52732ea0a323db2bea3e6a5995391fed3bc1f2b81d84ee0bcbc16e7c|4589638",
+  #  "v2.33.4|macos_arm64|d6a4041d52732ea0a323db2bea3e6a5995391fed3bc1f2b81d84ee0bcbc16e7c|4589638", # for mac user enable this
     "v2.33.4|linux_x86_64|d6a4041d52732ea0a323db2bea3e6a5995391fed3bc1f2b81d84ee0bcbc16e7c|4589638",
 ]
 version = 'v2.33.4'
+
+[python.resolves_to_only_binary]
+default_neuron = [
+    'torch-neuronx',
+    'neuronx-cc',
+    'torch',
+    'transformers-neuronx'
+]
+
+[python.resolves_to_no_binary]
+# NOTE: We want to force CMake build in case of llama-cpp-python
+#default_cuda = ['llama-cpp-python']
+default_neuron = [
+    'aws-neuronx-runtime-discovery'
+]
+
 
 [cli.alias]
 generate-lockfile-cpu = '--pantsrc-files=pants.cpu.toml generate-lockfiles --resolve=default_cpu'
@@ -115,7 +132,8 @@ args = [
 ]
 
 [python-protobuf]
-mypy_plugin = true
+mypy_plugin = false
+infer_runtime_dependency = false
 
 [test]
 output = "all"

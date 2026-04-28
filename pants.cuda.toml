@@ -1,0 +1,4 @@
+[python-repos]
+indexes.add = [
+  "https://abetlen.github.io/llama-cpp-python/whl/cu122"
+]
