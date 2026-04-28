@@ -1,2 +1,8 @@
 .idea/*
 .pants.d/*
+
+# Python files
+__pycache__/
+*.pyc
+dist/*
+/.envrc

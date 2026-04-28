@@ -1,0 +1,5 @@
+[python-repos]
+indexes.add = [
+    "https://download.pytorch.org/whl/cpu",
+    "https://pip.repos.neuron.amazonaws.com"
+]
