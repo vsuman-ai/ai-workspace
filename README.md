@@ -65,12 +65,8 @@ Open a PR:
 
 ### 4) Release process: promote `qa` to `live`
 
-```sh
-git fetch origin qa
-git checkout live
-git pull --ff-only origin live
-git merge --ff-only origin/qa
-git push origin live
+```text
+all the release procedures would be handles by one person
 ```
 
 # Repo Structure
