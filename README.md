@@ -66,7 +66,7 @@ Open a PR:
 ### 4) Release process: promote `qa` to `live`
 
 ```text
-all the release procedures would be handles by one person
+all the release procedures would be handled by one person
 ```
 
 # Repo Structure
